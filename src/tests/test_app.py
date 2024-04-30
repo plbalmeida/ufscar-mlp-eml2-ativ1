@@ -1,4 +1,4 @@
-import pytest
+import pytest  # noqa: F401
 from app import app as flask_app
 
 
