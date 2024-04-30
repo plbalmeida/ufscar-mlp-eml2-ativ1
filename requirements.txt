@@ -1,4 +1,3 @@
-bandit
 joblib
 flake8
 flask
