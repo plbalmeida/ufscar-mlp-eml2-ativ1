@@ -1,6 +1,4 @@
-excluded_paths:
-  - "tests/*"
+exclude:
+  - '**/tests/**'
 
-tests:
-  skip:
-    - B101
+skips: ['B101']
