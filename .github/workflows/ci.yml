@@ -38,6 +38,7 @@ jobs:
     - name: Run linting tools
       run: |
         docker run plbalmeida85/ufscar-mlp-eml2-ativ1:latest flake8 ./src
+
     - name: Run security checks
       run: |
         docker run plbalmeida85/ufscar-mlp-eml2-ativ1:latest bandit -r ./src
