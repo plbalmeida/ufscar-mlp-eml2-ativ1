@@ -1,6 +1,8 @@
+bandit
+joblib
+flake8
 flask
 numpy
 pandas
-scikit-learn
-joblib
 pytest
+scikit-learn
