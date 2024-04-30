@@ -21,7 +21,7 @@ jobs:
       with:
         context: .
         push: false
-        tags: my_ml_app:latest
+        tags: ufscar-mlp-eml2-ativ1:latest
 
   test:
     needs: build
@@ -36,7 +36,7 @@ jobs:
 
     - name: Docker Run
       run: |
-        docker run my_ml_app:latest pytest ./src/tests
+        docker run ufscar-mlp-eml2-ativ1:latest pytest ./src/tests
 
   validate:
     needs: test
@@ -51,4 +51,4 @@ jobs:
 
     - name: Validate Model
       run: |
-        docker run my_ml_app:latest python -m src.model.validate
+        docker run ufscar-mlp-eml2-ativ1:latest python -m src.model.validate
