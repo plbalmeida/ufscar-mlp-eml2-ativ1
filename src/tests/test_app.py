@@ -14,5 +14,7 @@ def client(app):
 
 def test_predict(client):
     response = client.post('/predict', json={'features': [5.1, 3.5, 1.4, 0.2]})
-    assert response.status_code == 200
-    assert 'prediction' in response.get_json()
+    if response.status_code != 200:
+        raise ValueError('Unexpected status code')
+    if 'prediction' not in response.get_json():
+        raise ValueError('Missing prediction in response')
