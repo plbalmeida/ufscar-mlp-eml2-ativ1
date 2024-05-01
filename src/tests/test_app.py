@@ -19,7 +19,7 @@ def test_predict_endpoint(client):
 
 
 def test_predict_endpoint_failure(client):
-    """Tests the prediction endpoint with incorrect data."""
+    """ Testa o endpoint de predição com dados incorretos. """
     response = client.post('/predict', json={'wrong_key': 'value'})
     assert response.status_code == 400
 
