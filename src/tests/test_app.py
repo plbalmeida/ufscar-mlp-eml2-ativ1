@@ -1,5 +1,5 @@
 import pytest  # noqa: F401
-from app import app as flask_app
+from src.app import app as flask_app
 
 
 @pytest.fixture

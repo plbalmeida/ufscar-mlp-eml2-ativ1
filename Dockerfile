@@ -1,7 +1,5 @@
 FROM python:3.8-slim
 
-ENV PYTHONPATH /usr/src/app
-
 WORKDIR /usr/src/app
 
 COPY . .

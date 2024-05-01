@@ -54,4 +54,4 @@ jobs:
 
     - name: Docker Run
       run: |
-        docker run plbalmeida85/ufscar-mlp-eml2-ativ1:latest pytest ./src/tests
+        docker run -e PYTHONPATH="/usr/src/app" plbalmeida85/ufscar-mlp-eml2-ativ1:latest pytest ./src/tests
