@@ -2,7 +2,7 @@
 
 ## Projeto de classificação de Iris com esteira de CI com Actions do GitHub
 
-Este repositório contém o código e os artefatos para a atividade 1 do módulo 2 de Engenharia de Machine Learning, parte do curso de pós-graduação *ML in Production* da UFSCar. O projeto consiste em um modelo de Machine Learning para classificar flores Iris, uma API Flask para predição online, Docker para containerização da aplicação e esteira de CI com três jobs de build, validação e teste.
+Este repositório contém o código e os artefatos para a atividade 1 do módulo 2 de Engenharia de Machine Learning, parte do curso de pós-graduação *ML in Production* da UFSCar. O projeto consiste em um modelo de Machine Learning para classificar flores Iris, uma API Flask para predição online, Docker para containerização da aplicação e esteira de CI (Continuous Integration) com três jobs de build, validação e teste.
 
 ## Estrutura do repositório
 
@@ -45,43 +45,46 @@ python src/model.py
 
 É esperado que o arquivo `iris_model.pkl` seja gerado na raíz do diretório do repositório.
 
-### Passo 3: Push para a branch principal para executar a esteira de CI
+### Passo 3: Execução da esteira de CI
 
-Faça o push utilizando o seguinte comando para a branch `main`:
+Faça o push utilizando o seguinte comando para a branch `main` do repositório:
 
 ```
 git push
 ```
 
-### Passo 4: Rodar o container
+É esperado que o pipeline de CI no Actions do GitHub seja executado com sucesso.
 
-Inicie o container com o seguinte comando:
+![](ci_pipeline.png)
 
-```
-docker run -p 5000:5000 ufscar-mlp-eml2-ativ2
-```
+O pipeline de CI definido no GitHub Actions possui três jobs principais que orquestram o fluxo de trabalho desde a construção da imagem Docker até a validação do código e execução de testes. Aqui está um resumo de cada job e o que eles fazem:
 
-O comando acima irá rodar o container e mapear a porta 5000 do container para a porta 5000 do seu host local.
+#### `build-and-push`
+**Objetivo**: Construir e enviar uma imagem Docker para um registro Docker (Docker Hub).
+- **Checkout code**: Esta etapa clona o código-fonte do repositório GitHub para o ambiente do runner do GitHub Actions.
+- **Set up Docker Buildx**: Configura o Buildx como o builder Docker no runner, o que permite construir imagens Docker multi-plataforma.
+- **Log in to Docker Hub**: Autentica no Docker Hub usando credenciais armazenadas como segredos no GitHub, permitindo que o runner faça o push de imagens para o repositório.
+- **Build and push Docker image**: Constrói a imagem Docker baseada no `Dockerfile` localizado na raiz do diretório do projeto e envia a imagem para o Docker Hub com a tag especificada.
 
-## Como fazer predições
+#### `validate`
+**Objetivo**: Validar o código-fonte usando ferramentas de linting.
+- **Dependências**: Este job só é executado após a conclusão bem-sucedida do job `build-and-push`.
+- **Checkout code**: Repete o processo de clonar o código-fonte para assegurar que as verificações de linting são feitas na versão mais atual do código.
+- **Run linting tools**: Executa ferramentas de linting (neste caso, `flake8`) dentro de um container Docker baseado na imagem que foi construída e enviada no primeiro job. Essa etapa é crucial para garantir que o código siga as diretrizes de estilo e não contenha erros básicos de sintaxe.
 
-Com o container rodando, você pode enviar uma requisição POST para a API para fazer previsões. Use o seguinte comando cURL substituindo [5.1, 3.5, 1.4, 0.2] pelas características da flor que você deseja classificar:
+#### `test`
+**Objetivo**: Executar testes automatizados para verificar a funcionalidade do código.
+- **Dependências**: Depende do sucesso do job `validate`, garantindo que os testes só ocorram após a validação bem-sucedida do código.
+- **Checkout code**: Novamente, clona o código-fonte para o ambiente do runner.
+- **Log in to Docker Hub**: Autentica novamente no Docker Hub para possibilitar a execução de containers baseados na imagem Docker previamente enviada.
+- **Docker Run**: Executa os testes unitários configurados no diretório `tests` do projeto, dentro do container Docker, utilizando a imagem Docker que foi construída. A variável de ambiente `PYTHONPATH` é configurada para assegurar que o Python reconheça o diretório correto para importações de módulos durante os testes.
 
-```
-curl -X POST -H "Content-Type: application/json" \
-    -d '{"features": [5.1, 3.5, 1.4, 0.2]}' \
-    http://localhost:5000/predict
-```
+Cada job está claramente definido para lidar com uma fase específica do ciclo de desenvolvimento:
+- **Build-and-push**: foca na preparação e disponibilização da imagem Docker.
+- **Validate**: foca na qualidade do código e conformidade com padrões de codificação.
+- **Test**: foca na corretude e funcionalidade do código através de testes automatizados.
 
-A resposta da API será um JSON contendo a classe prevista pelo modelo. Por exemplo:
-
-```
-{
-    "prediction": 0
-}
-```
-
-Aqui, o número retornado corresponde à classe da flor Iris prevista pelo modelo (por exemplo, 0 para Iris-setosa).
+Este fluxo garante que cada push no branch `main` passe por um processo rigoroso de CI, ajudando a manter a qualidade e a estabilidade do código no projeto.
 
 # Contribuições
 
