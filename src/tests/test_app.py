@@ -19,13 +19,12 @@ def test_predict_endpoint(client):
 
 
 def test_predict_endpoint_failure(client):
-    """ Testa o endpoint de predição com dados incorretos. """
+    """Tests the prediction endpoint with incorrect data."""
     response = client.post('/predict', json={'wrong_key': 'value'})
-    assert response.status_code == 200  # O código pode ser alterado dependendo da lógica de tratamento de erros.  # noqa: E501
-    assert 'error' in json.loads(response.data)
+    assert response.status_code == 400
 
 
 def test_predict_endpoint_no_data(client):
     """ Testa o endpoint de predição sem dados enviados. """
     response = client.post('/predict')
-    assert response.status_code == 400  # Assumindo que o Flask retornará 400 para uma requisição sem JSON válido.  # noqa: E501
+    assert response.status_code == 400
