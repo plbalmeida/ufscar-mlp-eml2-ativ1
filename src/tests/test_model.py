@@ -1,7 +1,7 @@
 import numpy as np
 import pytest  # noqa: F401
 import joblib
-from model import train_and_save_model, predict, validate
+from src.model import train_and_save_model, predict, validate
 from sklearn.exceptions import NotFittedError  # noqa: F401
 
 
