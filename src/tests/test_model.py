@@ -1,10 +1,39 @@
-import joblib
 import numpy as np
 import pytest  # noqa: F401
+import joblib
+from model import train_and_save_model, predict, validate
+from sklearn.exceptions import NotFittedError  # noqa: F401
 
 
-def test_predict():
-    model = joblib.load('iris_model.pkl')
-    test_input = np.array([[5.9, 3.0, 5.1, 1.8]])
-    prediction = model.predict(test_input)
-    assert prediction is not None
+@pytest.fixture(scope="module")
+def trained_model():
+    """ Treina o modelo e o salva para uso nos testes. """
+    train_and_save_model()
+    return joblib.load('iris_model.pkl')
+
+
+def test_train_and_save_model():
+    """ Testa se o modelo é treinado e salvo corretamente. """
+    train_and_save_model()
+    loaded_model = joblib.load('iris_model.pkl')
+    assert loaded_model is not None
+
+
+def test_predict_valid(trained_model):
+    """ Testa a função de predição com dados válidos. """
+    features = [5.9, 3.0, 5.1, 1.8]
+    prediction = predict(features)
+    assert isinstance(prediction, np.int64)
+
+
+def test_predict_invalid(trained_model):
+    """ Testa a função de predição com dados inválidos para gerar exceções. """
+    with pytest.raises(ValueError):
+        predict([])  # Entrada vazia
+
+
+def test_validate_accuracy(trained_model, capsys):
+    """ Testa se a validação imprime a precisão esperada. """
+    validate()
+    captured = capsys.readouterr()
+    assert "Model validation: PASS" in captured.out
