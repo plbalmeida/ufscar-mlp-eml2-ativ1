@@ -57,32 +57,35 @@ git push
 
 ![](ci_pipeline.png)
 
-O pipeline de CI definido no GitHub Actions possui três jobs principais que orquestram o fluxo de trabalho desde a construção da imagem Docker até a validação do código e execução de testes. Aqui está um resumo de cada job e o que eles fazem:
+O pipeline de CI definido no GitHub Actions organiza o fluxo de trabalho em três etapas principais, começando pela verificação de lint, seguido por testes e, por fim, construção e envio da imagem Docker. Aqui está um resumo de cada job e o que eles fazem:
 
-#### `build-and-push`
-**Objetivo**: Construir e enviar uma imagem Docker para um registro Docker (Docker Hub).
-- **Checkout code**: Esta etapa clona o código-fonte do repositório GitHub para o ambiente do runner do GitHub Actions.
-- **Set up Docker Buildx**: Configura o Buildx como o builder Docker no runner, o que permite construir imagens Docker multi-plataforma.
-- **Log in to Docker Hub**: Autentica no Docker Hub usando credenciais armazenadas como segredos no GitHub, permitindo que o runner faça o push de imagens para o repositório.
-- **Build and push Docker image**: Constrói a imagem Docker baseada no `Dockerfile` localizado na raiz do diretório do projeto e envia a imagem para o Docker Hub com a tag especificada.
-
-#### `validate`
+#### `lint`
 **Objetivo**: Validar o código-fonte usando ferramentas de linting.
-- **Dependências**: Este job só é executado após a conclusão bem-sucedida do job `build-and-push`.
-- **Checkout code**: Repete o processo de clonar o código-fonte para assegurar que as verificações de linting são feitas na versão mais atual do código.
-- **Run linting tools**: Executa ferramentas de linting (neste caso, `flake8`) dentro de um container Docker baseado na imagem que foi construída e enviada no primeiro job. Essa etapa é crucial para garantir que o código siga as diretrizes de estilo e não contenha erros básicos de sintaxe.
+- **Checkout code**: Esta etapa clona o código-fonte do repositório GitHub para o ambiente do runner do GitHub Actions.
+- **Setup Python**: Configura a versão do Python para a execução no runner.
+- **Install dependencies**: Instala todas as dependências necessárias definidas no `requirements.txt`.
+- **Run Flake8**: Executa o linter `flake8` para verificar a conformidade do código com as diretrizes de estilo, ajudando a garantir que não contenham erros básicos de sintaxe ou estilo.
 
 #### `test`
 **Objetivo**: Executar testes automatizados para verificar a funcionalidade do código.
-- **Dependências**: Depende do sucesso do job `validate`, garantindo que os testes só ocorram após a validação bem-sucedida do código.
-- **Checkout code**: Novamente, clona o código-fonte para o ambiente do runner.
-- **Log in to Docker Hub**: Autentica novamente no Docker Hub para possibilitar a execução de containers baseados na imagem Docker previamente enviada.
-- **Docker Run**: Executa os testes unitários configurados no diretório `tests` do projeto, dentro do container Docker, utilizando a imagem Docker que foi construída. A variável de ambiente `PYTHONPATH` é configurada para assegurar que o Python reconheça o diretório correto para importações de módulos durante os testes.
+- **Dependências**: Este job depende do sucesso do job `lint`, garantindo que os testes só ocorram após a validação bem-sucedida do código.
+- **Checkout code**: Clona novamente o código-fonte para garantir que os testes sejam executados na versão mais atual.
+- **Setup Python**: Prepara o ambiente Python especificado.
+- **Install dependencies**: Instala as dependências necessárias para os testes.
+- **Run tests**: Executa os testes unitários configurados no diretório `tests` do projeto, garantindo que o código funcione conforme esperado.
+
+#### `build-and-push`
+**Objetivo**: Construir e enviar uma imagem Docker para um registro Docker (Docker Hub).
+- **Dependências**: Depende do sucesso do job `test`, assegurando que a imagem Docker só seja construída e enviada após os testes passarem.
+- **Checkout code**: Clona o código-fonte para o ambiente do runner.
+- **Set up Docker Buildx**: Prepara o Buildx como o builder Docker no runner, permitindo a construção de imagens Docker multi-plataforma.
+- **Log in to Docker Hub**: Autentica no Docker Hub usando credenciais armazenadas como segredos no GitHub, permitindo que o runner faça o push da imagem para o repositório.
+- **Build and push Docker image**: Constrói a imagem Docker baseada no `Dockerfile` localizado na raiz do diretório do projeto e envia a imagem para o Docker Hub com a tag especificada.
 
 Cada job está claramente definido para lidar com uma fase específica do ciclo de desenvolvimento:
-- **Build-and-push**: foca na preparação e disponibilização da imagem Docker.
-- **Validate**: foca na qualidade do código e conformidade com padrões de codificação.
+- **Lint**: foca na qualidade do código e conformidade com padrões de codificação.
 - **Test**: foca na corretude e funcionalidade do código através de testes automatizados.
+- **Build-and-push**: foca na preparação e disponibilização da imagem Docker.
 
 Este fluxo garante que cada push no branch `main` passe por um processo rigoroso de CI, ajudando a manter a qualidade e a estabilidade do código no projeto.
 
