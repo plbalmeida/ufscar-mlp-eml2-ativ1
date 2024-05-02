@@ -1,10 +1,10 @@
-import joblib
 from flask import Flask, request, jsonify
+from src.model import get_model
 
 
 app = Flask(__name__)
 
-model = joblib.load('iris_model.pkl')
+model = get_model()
 
 
 @app.route('/predict', methods=['POST'])
