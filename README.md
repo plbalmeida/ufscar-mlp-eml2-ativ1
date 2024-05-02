@@ -2,7 +2,7 @@
 
 ## Projeto de classificação de Iris com esteira de CI com Actions do GitHub
 
-Este repositório contém o código e os artefatos para a atividade 1 do módulo 2 de Engenharia de Machine Learning, parte do curso de pós-graduação *ML in Production* da UFSCar. O projeto consiste em um modelo de Machine Learning para classificar flores Iris, uma API Flask para predição online, Docker para containerização da aplicação e esteira de CI (Continuous Integration) com três jobs de build, validação e teste.
+Este repositório contém o código e os artefatos para a atividade 1 do módulo 2 de Engenharia de Machine Learning, parte do curso de pós-graduação *ML in Production* da UFSCar. O projeto consiste em um modelo de Machine Learning para classificar flores Iris, uma API Flask para predição online, Docker para containerização da aplicação e esteira de CI (Continuous Integration) com três jobs: de lint, teste e build.
 
 ## Estrutura do repositório
 
