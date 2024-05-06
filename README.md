@@ -1,4 +1,4 @@
-# UFSCar - ML in Production - EML2 - Atividade 1
+# UFSCar - ML in Production - Módulo Eng. de ML 2 - Atividade 1
 
 ## Projeto de classificação de Iris com esteira de CI com Actions do GitHub
 
@@ -83,9 +83,9 @@ O pipeline de CI definido no GitHub Actions organiza o fluxo de trabalho em trê
 - **Build and push Docker image**: Constrói a imagem Docker baseada no `Dockerfile` localizado na raiz do diretório do projeto e envia a imagem para o Docker Hub com a tag especificada.
 
 Cada job está claramente definido para lidar com uma fase específica do ciclo de desenvolvimento:
-- **Lint**: foca na qualidade do código e conformidade com padrões de codificação.
-- **Test**: foca na corretude e funcionalidade do código através de testes automatizados.
-- **Build-and-push**: foca na preparação e disponibilização da imagem Docker.
+- **`lint`**: foca na qualidade do código e conformidade com padrões de codificação.
+- **`test`**: foca na corretude e funcionalidade do código através de testes automatizados.
+- **`build-and-push`**: foca na preparação e disponibilização da imagem Docker.
 
 Este fluxo garante que cada push no branch `main` passe por um processo rigoroso de CI, ajudando a manter a qualidade e a estabilidade do código no projeto.
 
